@@ -1,0 +1,37 @@
+{
+  "name": "pasteleria-tony_back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js",
+    "dev": "nodemon --watch server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@mercadopago/sdk-js": "^0.0.3",
+    "bcrypt": "^5.1.1",
+    "cloudinary": "^2.4.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-useragent": "^1.0.15",
+    "file-type": "^19.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "mercadopago": "^2.0.14",
+    "mongoose": "^8.6.0",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
+    "nanoid": "^5.0.7",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.14",
+    "nodemon": "^3.1.4",
+    "request": "^2.88.2",
+    "resend": "^4.0.0",
+    "stripe": "^16.8.0",
+    "web-push": "^3.6.7",
+    "winston": "^3.14.2"
+  }
+}
