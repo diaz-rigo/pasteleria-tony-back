@@ -4,7 +4,7 @@
 
 
 # # Ignorar un archivo específico
-*.env
+# *.env
 # # Ignorar un archivo específico
 # .env
 
