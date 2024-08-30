@@ -10,9 +10,11 @@ const sizeStockSchema = new Schema({
 
 // Define the schema for product variants
 const variantSchema = new Schema({
-    flavor: { type: String, required: true }, // Added flavor field
-    color: { type: String, required: true },
-    texture: { type: String, required: true },
+    flavor: { type: String, required: true }, // Sabor de la variante
+    color: { type: String, required: true }, // Color de la variante
+    texture: { type: String, required: true }, // Textura de la variante
+    shape: { type: String, required: true }, // Forma de la variante (e.g., redondo, cuadrado, de corazón)
+    description: { type: String }, // Descripción adicional
     sizeStock: {
         type: [sizeStockSchema],
         required: true

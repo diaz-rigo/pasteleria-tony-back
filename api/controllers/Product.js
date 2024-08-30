@@ -19,6 +19,7 @@ exports.createProduct = async (req, res) => {
         const defaultTexture = 'Suave'; // Valor por defecto para texture
         const defaultImages = ['default1.jpg', 'default2.jpg']; // Valor por defecto para imágenes
         const defaultFlavor = 'Sin especificar'; // Valor por defecto para flavor
+        const defaultShape = 'Redondo'; // Valor por defecto para shape
 
         const validatedVariants = variants.map((variant, index) => {
             if (typeof variant.flavor !== 'string' || variant.flavor.trim().length === 0) {
@@ -32,6 +33,11 @@ exports.createProduct = async (req, res) => {
             // Establecer valor por defecto para texture
             if (typeof variant.texture !== 'string' || variant.texture.trim().length === 0) {
                 variant.texture = defaultTexture;
+            }
+
+            // Establecer valor por defecto para shape
+            if (typeof variant.shape !== 'string' || variant.shape.trim().length === 0) {
+                variant.shape = defaultShape;
             }
 
             // Validar y establecer valor por defecto para images

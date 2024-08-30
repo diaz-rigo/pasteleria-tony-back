@@ -8,6 +8,8 @@ function logRequest(req, res, next) {
     next();
 }
 const productRoutes = require('./api/routes/Product');
+const authRoutes = require('./api/routes/auth');
+
 // const authRoutes = require('./api/routes/auth');
 // const userRoutes = require('./api/routes/user');
 // const categoriRoutes = require('./api/routes/categori');
@@ -42,9 +44,10 @@ app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 // Middleware de registro
 
-// app.use('/auth', authRoutes);
+app.use('/auth', authRoutes);
 // app.use('/user', userRoutes);
 app.use('/product', productRoutes);
+
 // app.use('/categori', categoriRoutes);
 // app.use('/stripe', paymentStripeRoutes);
 // app.use('/correo', correo);
