@@ -1,20 +1,30 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Define the schema for size and stock
+// Define el esquema para el stock y tamaño con disponibilidad individual
 const sizeStockSchema = new Schema({
-    size: { type: Number, required: true },
-    stock: { type: Number, required: true },
-    price: { type: Number, required: true }
+    size: { type: Number, required: true, min: 1 },
+    stock: { type: Number, required: true, min: 0 },
+    price: { type: Number, required: true, min: 0 },
+    availabilityStatus: { 
+        type: String, 
+        enum: ["available", "on_demand", "out_of_stock"], 
+        default: "available" 
+    }
 });
 
-// Define the schema for product variants
+// Define el esquema para las variantes del producto con disponibilidad
 const variantSchema = new Schema({
-    flavor: { type: String, required: true }, // Sabor de la variante
-    color: { type: String, required: true }, // Color de la variante
-    texture: { type: String, required: true }, // Textura de la variante
-    shape: { type: String, required: true }, // Forma de la variante (e.g., redondo, cuadrado, de corazón)
-    description: { type: String }, // Descripción adicional
+    flavor: { type: String, required: true }, 
+    color: { type: String, required: true }, 
+    texture: { type: String, required: true }, 
+    shape: { type: String, required: true }, 
+    description: { type: String },
+    availabilityStatus: { 
+        type: String, 
+        enum: ["available", "on_demand", "out_of_stock"], 
+        default: "available" 
+    },
     sizeStock: {
         type: [sizeStockSchema],
         required: true
@@ -24,28 +34,33 @@ const variantSchema = new Schema({
         required: true,
         validate: {
             validator: function(images) {
-                return Array.isArray(images) && images.every(img => typeof img === 'string');
+                return Array.isArray(images) && images.every(img => typeof img === 'string' && img.startsWith('http'));
             },
-            message: props => `${props.value} should be an array of strings!`
+            message: props => `${props.value} no es una URL válida.`
         }
     }
 });
 
-// Define the main product schema
+// Define el esquema principal del producto con disponibilidad global
 const productSchema = new Schema({
     name: { type: String, required: true },
-    brand: { type: String, required: true },
+    brand: { type: String, default: "Pastelería Tony" },
     category: { type: String, required: true },
-    material: { type: String, required: true },
+    ingredientes: { type: String, required: true },
     description: { type: String },
     dateAdded: { type: Date, default: Date.now },
     isFeatured: { type: Boolean, default: false },
+    availabilityStatus: { 
+        type: String, 
+        enum: ["available", "on_demand", "out_of_stock"], 
+        default: "available" 
+    },
     ratings: {
         average: { type: Number, default: 0 },
         reviews: [
             {
                 userId: { type: Schema.Types.ObjectId, ref: 'User' },
-                rating: { type: Number, required: true },
+                rating: { type: Number, required: true, min: 1, max: 5 },
                 comment: { type: String }
             }
         ]
@@ -53,7 +68,6 @@ const productSchema = new Schema({
     variants: { type: [variantSchema], required: true }
 });
 
-// Create and export the Product model
+// Exportar modelo
 const Product = mongoose.model('Product', productSchema);
-
 module.exports = Product;

@@ -1,0 +1,42 @@
+{
+    "name": "sdsd",
+    "description": "sdsd",
+    "brand": "",
+    "ingredientes": "dsds",
+    "category": {
+        "name": "Postres",
+        "value": "Postres"
+    },
+    "availabilityStatus": {
+        "label": "Disponible",
+        "value": "available"
+    },
+    "variants": [
+        {
+            "images": [
+                "https://res.cloudinary.com/dfpdb2cdl/image/upload/v1740876317/productos/ivxrhggl7bzeervwqmhu.jpg",
+                "https://res.cloudinary.com/dfpdb2cdl/image/upload/v1740876317/productos/gweb8oqsomwyylvh7vrw.png",
+                "https://res.cloudinary.com/dfpdb2cdl/image/upload/v1740876317/productos/da7pq0ivuefg1t4yhk8f.jpg"
+            ],
+            "color": "dsd",
+            "flavor": "sd",
+            "shape": "sdds",
+            "texture": "asd",
+            "description": "dss",
+            "sizeStock": [
+                {
+                    "size": 12,
+                    "stock": 2,
+                    "price": 121
+                },
+                {
+                    "size": 323,
+                    "stock": 11,
+                    "price": 12
+                }
+            ]
+        }
+    ]
+}
+
+

@@ -2,92 +2,97 @@ const Product = require('../models/Product');
 
 // Crear un nuevo producto
 exports.createProduct = async (req, res) => {
-    const { name, brand, category, material, description, variants } = req.body;
-
-    // Imprimir los datos recibidos
-    console.log('Datos recibidos:', JSON.stringify(req.body, null, 2));
-
     try {
-        // Validar campos obligatorios
-        const requiredFields = ['name', 'brand', 'category', 'material', 'variants'];
-        const missingFields = requiredFields.filter(field => !req.body[field]);
-        if (missingFields.length > 0) {
-            return res.status(400).json({ error: `Faltan campos requeridos: ${missingFields.join(', ')}` });
+        const { name, category, ingredientes, description, variants, availabilityStatus } = req.body;
+
+        console.log('Datos recibidos:', JSON.stringify(req.body, null, 2));
+
+        // Validación de campos obligatorios
+        if (!name || !category || !ingredientes || !variants || !Array.isArray(variants)) {
+            return res.status(400).json({ error: 'Faltan campos obligatorios o el formato es incorrecto.' });
         }
 
-        // Establecer valores por defecto para variantes
-        const defaultTexture = 'Suave'; // Valor por defecto para texture
-        const defaultImages = ['default1.jpg', 'default2.jpg']; // Valor por defecto para imágenes
-        const defaultFlavor = 'Sin especificar'; // Valor por defecto para flavor
-        const defaultShape = 'Redondo'; // Valor por defecto para shape
+        // Extraer valores normalizados
+        const categoryValue = typeof category === 'object' && category.value ? category.value : category;
+        const availabilityStatusValue = typeof availabilityStatus === 'object' && availabilityStatus.value ? availabilityStatus.value : availabilityStatus || 'available';
 
+        // Validación y normalización de variantes
         const validatedVariants = variants.map((variant, index) => {
-            if (typeof variant.flavor !== 'string' || variant.flavor.trim().length === 0) {
-                variant.flavor = defaultFlavor;
+            if (!variant.flavor || !variant.color || !variant.texture || !variant.shape || !variant.sizeStock) {
+                return res.status(400).json({ error: `La variante en el índice ${index} tiene datos incompletos.` });
             }
 
-            if (typeof variant.color !== 'string') {
-                throw new Error(`La variante en el índice ${index} debe tener color como string.`);
-            }
-
-            // Establecer valor por defecto para texture
-            if (typeof variant.texture !== 'string' || variant.texture.trim().length === 0) {
-                variant.texture = defaultTexture;
-            }
-
-            // Establecer valor por defecto para shape
-            if (typeof variant.shape !== 'string' || variant.shape.trim().length === 0) {
-                variant.shape = defaultShape;
-            }
-
-            // Validar y establecer valor por defecto para images
-            if (!Array.isArray(variant.images) || variant.images.some(image => typeof image !== 'string')) {
-                variant.images = defaultImages;
-            }
-
-            // Validar sizeStock
             if (!Array.isArray(variant.sizeStock)) {
-                throw new Error(`La variante en el índice ${index} debe tener un array de sizeStock.`);
+                return res.status(400).json({ error: `La variante en el índice ${index} debe tener un array de sizeStock.` });
             }
-            variant.sizeStock.forEach((sizeStock, sizeIndex) => {
+
+            // Validación de sizeStock
+            variant.sizeStock = variant.sizeStock.map((sizeStock, sizeIndex) => {
                 if (typeof sizeStock.size !== 'number' || sizeStock.size <= 0) {
-                    throw new Error(`El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener size como un número positivo.`);
+                    return res.status(400).json({ error: `El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener size como un número positivo.` });
                 }
                 if (typeof sizeStock.stock !== 'number' || sizeStock.stock < 0) {
-                    throw new Error(`El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener stock como un número no negativo.`);
+                    return res.status(400).json({ error: `El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener stock como un número no negativo.` });
                 }
                 if (typeof sizeStock.price !== 'number' || sizeStock.price <= 0) {
-                    throw new Error(`El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener price como un número positivo.`);
+                    return res.status(400).json({ error: `El sizeStock en el índice ${sizeIndex} de la variante en el índice ${index} debe tener price como un número positivo.` });
                 }
+
+                return {
+                    ...sizeStock,
+                    availabilityStatus: sizeStock.availabilityStatus?.value || sizeStock.availabilityStatus || 'available'
+                };
             });
 
-            return variant;
+            // Validación de imágenes
+            if (variant.images && (!Array.isArray(variant.images) || !variant.images.every(img => typeof img === 'string' && img.startsWith('http')))) {
+                return res.status(400).json({ error: `Las imágenes de la variante en el índice ${index} deben ser URLs válidas.` });
+            }
+
+            return {
+                ...variant,
+                availabilityStatus: variant.availabilityStatus?.value || variant.availabilityStatus || 'available'
+            };
         });
 
-        // Crear el producto
+        // Crear producto
         const product = new Product({
             name,
-            brand,
-            category,
-            material,
+            category: categoryValue,
+            ingredientes,
             description,
+            availabilityStatus: availabilityStatusValue,
             variants: validatedVariants
         });
 
-        // Guardar el producto en la base de datos
+        // Guardar en la BD
         const savedProduct = await product.save();
 
-        // Imprimir el producto creado
         console.log('Producto creado:', savedProduct);
-
-        // Responder con el ID del producto creado
         res.status(201).json({ productId: savedProduct._id, message: 'Producto creado exitosamente.' });
 
     } catch (error) {
         console.error('Error durante la creación del producto:', error.message);
-        res.status(400).json({ error: error.message });
+        res.status(500).json({ error: 'Error en el servidor. Intenta nuevamente.' });
     }
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Obtener todos los productos
 exports.getAllProducts = async (req, res) => {
@@ -114,6 +119,7 @@ exports.getProductById = async (req, res) => {
 
 // Actualizar un producto por ID
 exports.updateProduct = async (req, res) => {
+    console.log(req.body)
     try {
         const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedProduct) {

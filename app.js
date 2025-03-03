@@ -11,7 +11,8 @@ const productRoutes = require('./api/routes/Product');
 const authRoutes = require('./api/routes/auth');
 
 // const authRoutes = require('./api/routes/auth');
-// const userRoutes = require('./api/routes/user');
+const userRoutes = require('./api/routes/userRoutes');
+const upload = require('./api/routes/upload.router');
 // const categoriRoutes = require('./api/routes/categori');
 // const paymentStripeRoutes = require('./api/routes/paymentStripe');
 // const correo = require('./api/routes/emailRoutes');
@@ -45,8 +46,9 @@ app.use(express.json());
 // Middleware de registro
 
 app.use('/auth', authRoutes);
-// app.use('/user', userRoutes);
+app.use('/user', userRoutes);
 app.use('/product', productRoutes);
+app.use('/upload', upload);
 
 // app.use('/categori', categoriRoutes);
 // app.use('/stripe', paymentStripeRoutes);
