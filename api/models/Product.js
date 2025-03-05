@@ -31,13 +31,12 @@ const variantSchema = new Schema({
     },
     images: {
         type: [String],
-        required: true,
-        validate: {
-            validator: function(images) {
-                return Array.isArray(images) && images.every(img => typeof img === 'string' && img.startsWith('http'));
-            },
-            message: props => `${props.value} no es una URL válida.`
-        }
+        // validate: {
+        //     validator: function(images) {
+        //         return Array.isArray(images) && images.every(img => typeof img === 'string' && img.startsWith('http'));
+        //     },
+        //     message: props => `${props.value} no es una URL válida.`
+        // }
     }
 });
 
