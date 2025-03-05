@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const userSchema = mongoose.Schema({
+const userSchema = new Schema({
     _id: mongoose.Schema.Types.ObjectId,
     email: { 
         type: String, 
@@ -36,4 +37,7 @@ const userSchema = mongoose.Schema({
 }, { versionKey: false });
 
 
-module.exports = mongoose.model('User', userSchema);
+// module.exports = mongoose.model('User', userSchema);
+// Exportar modelo
+const Product = mongoose.model('User', userSchema);
+module.exports = Product;
