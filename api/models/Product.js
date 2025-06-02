@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 // Define el esquema para el stock y tamaño con disponibilidad individual
 const sizeStockSchema = new Schema({
-    size: { type: Number, required: true, min: 1 },
+    size: { type: Number, required: true, min: 0 },
     stock: { type: Number, required: true, min: 0 },
     price: { type: Number, required: true, min: 0 },
     availabilityStatus: { 
@@ -31,12 +31,6 @@ const variantSchema = new Schema({
     },
     images: {
         type: [String],
-        // validate: {
-        //     validator: function(images) {
-        //         return Array.isArray(images) && images.every(img => typeof img === 'string' && img.startsWith('http'));
-        //     },
-        //     message: props => `${props.value} no es una URL válida.`
-        // }
     }
 });
 

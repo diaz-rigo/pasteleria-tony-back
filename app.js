@@ -10,13 +10,9 @@ function logRequest(req, res, next) {
 const productRoutes = require('./api/routes/Product');
 const authRoutes = require('./api/routes/auth');
 
-// const authRoutes = require('./api/routes/auth');
 const userRoutes = require('./api/routes/userRoutes');
 const upload = require('./api/routes/upload.router');
-// const categoriRoutes = require('./api/routes/categori');
-// const paymentStripeRoutes = require('./api/routes/paymentStripe');
-// const correo = require('./api/routes/emailRoutes');
-// const purchase = require('./api/routes/purchase');
+
 
 
 const url =
@@ -43,18 +39,11 @@ app.use((req, res, next) => {
 
 app.use('/uploads', express.static('uploads'));
 app.use(express.json());
-// Middleware de registro
 
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/product', productRoutes);
 app.use('/upload', upload);
-
-// app.use('/categori', categoriRoutes);
-// app.use('/stripe', paymentStripeRoutes);
-// app.use('/correo', correo);
-// app.use('/purchase', purchase);
-
 
 app.use((req, res, next) => {
     const error = new Error(' corriendo ...');
