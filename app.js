@@ -12,8 +12,7 @@ const authRoutes = require('./api/routes/auth');
 
 const userRoutes = require('./api/routes/userRoutes');
 const upload = require('./api/routes/upload.router');
-
-
+const configSistem = require('./api/routes/config.routes');
 
 const url =
     'mongodb+srv://20211036:' +  process.env.MONGO_ATLAS_PW   + '@cluster0.jcf0o.mongodb.net/pasteleria';
@@ -44,6 +43,7 @@ app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/product', productRoutes);
 app.use('/upload', upload);
+app.use('/config', configSistem);
 
 app.use((req, res, next) => {
     const error = new Error(' corriendo ...');
