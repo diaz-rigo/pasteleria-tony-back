@@ -12,6 +12,7 @@ const authRoutes = require('./api/routes/auth');
 
 const userRoutes = require('./api/routes/userRoutes');
 const upload = require('./api/routes/upload.router');
+const orders = require('./api/routes/orders');
 const configSistem = require('./api/routes/config.routes');
 
 const url =
@@ -44,6 +45,7 @@ app.use('/user', userRoutes);
 app.use('/product', productRoutes);
 app.use('/upload', upload);
 app.use('/config', configSistem);
+app.use('/orders', orders);
 
 app.use((req, res, next) => {
     const error = new Error(' corriendo ...');
