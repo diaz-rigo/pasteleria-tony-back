@@ -80,6 +80,45 @@ function canTransition(from, to) {
   return iTo >= iFrom && iFrom !== -1; // no retrocesos “duros”
 }
 
+// controllers/order.controller.js
+exports.adminTopProducts = async (req, res) => {
+  try {
+    const match = buildFindQuery(req.query);
+    const { limit = 5 } = req.query;
+
+    const rows = await Order.aggregate([
+      { $match: match },
+      { $unwind: '$items' },
+      { $group: {
+          _id: {
+            productId: '$items.productId',
+            productName: '$items.productName'
+          },
+          ventas: { $sum: '$items.quantity' },
+          // precio representativo (si varía por pedido, usa el máximo)
+          precio: { $max: '$items.unitPrice' },
+          // tomar una imagen representativa del item (primer elemento del array images)
+          img: { $first: { $arrayElemAt: ['$items.images', 0] } }
+      }},
+      { $sort: { ventas: -1 } },
+      { $limit: Number(limit) },
+      { $project: {
+          _id: 0,
+          name: '$_id.productName',
+          ventas: 1,
+          precio: 1,
+          img: 1
+      }}
+    ]);
+
+    res.json({ ok: true, data: rows });
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ ok:false, msg:'Error top productos', error: e.message });
+  }
+};
+
+
 /* =========================
    LISTADO ADMIN CON FILTROS
 ========================= */

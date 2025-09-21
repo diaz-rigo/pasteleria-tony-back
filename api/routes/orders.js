@@ -39,6 +39,8 @@ function basicCreateOrderValidation(req, res, next) {
 // // GET /orders/admin/summary? (mismos filtros)
 // router.get('/admin/summary', optionalAuth, requireAdmin, orderCtrl.adminSummary);
 router.get('/admin', optionalAuth,  orderCtrl.adminList);
+// routes/orders.js
+router.get('/admin/top-products', optionalAuth, orderCtrl.adminTopProducts);
 
 // GET /orders/admin/summary? (mismos filtros)
 router.get('/admin/summary', optionalAuth,  orderCtrl.adminSummary);
