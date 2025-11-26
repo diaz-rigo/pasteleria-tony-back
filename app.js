@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require("cors");
 const app = express();
 require('dotenv').config()
 const morgan = require('morgan');
@@ -27,30 +28,34 @@ mongoose.connect(url).then(() => {
 mongoose.Promise = global.Promise;
 
 app.use(morgan('dev'));
+app.use(express.json());
 const allowedOrigins = [
     "http://localhost:4200",
     "https://pasteleria-tony.vercel.app"
 ];
 
-const corsOptions = {
+// app.use((req, res, next) => {
+//     res.header('Access-Control-Allow-Origin', '*');
+//     res.header('Access-Control-Allow-Headers', '*');
+//     if (req.method === 'OPTIONS') {
+//         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+//         return res.status(200).json({})
+//     }
+//     next();
+// });
+app.use(cors({
     origin: function(origin, callback) {
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.indexOf(origin) !== -1) {
+        if (!origin || allowedOrigins.includes(origin)) {
             callback(null, true);
         } else {
-            callback(new Error('CORS policy: origin not allowed: ' + origin));
+            callback(new Error("Not allowed by CORS"));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin', 'X-Requested-With'],
-    credentials: true // poner true solo si necesitas cookies/credenciales desde el cliente
-};
-
-// aplica CORS globalmente
-app.use(cors(corsOptions));
-// asegúrate de responder a preflight OPTIONS con CORS también
-app.options('*', cors(corsOptions));
-
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}));
+// Permitir preflight requests (OPTIONS)
+app.options("*", cors());
 app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 
