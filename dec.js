@@ -1,32 +1,11 @@
+// app.js (o index.js)
 const express = require('express');
-const app = express();
-require('dotenv').config()
 const morgan = require('morgan');
-const mongoose = require('mongoose');
+const cors = require('cors');
 
-function logRequest(req, res, next) {
-    console.log(`${new Date().toISOString()} - ${req.method} ${req.url}`);
-    next();
-}
-const productRoutes = require('./api/routes/Product');
-const authRoutes = require('./api/routes/auth');
-
-const userRoutes = require('./api/routes/userRoutes');
-const upload = require('./api/routes/upload.router');
-const orders = require('./api/routes/orders');
-const configSistem = require('./api/routes/config.routes');
-
-const url =
-    'mongodb+srv://20211036:' + process.env.MONGO_ATLAS_PW + '@cluster0.jcf0o.mongodb.net/pasteleria';
-mongoose.connect(url).then(() => {
-        console.log('Conexión ak MongoDB exitosa');
-    })
-    .catch(err => {
-        console.error('Error al conectar a MongoDB:', err.message);
-    });
-mongoose.Promise = global.Promise;
-
+const app = express();
 app.use(morgan('dev'));
+
 const allowedOrigins = [
     "http://localhost:4200",
     "https://pasteleria-tony.vercel.app"
@@ -34,6 +13,7 @@ const allowedOrigins = [
 
 const corsOptions = {
     origin: function(origin, callback) {
+        // origin === undefined when the request is from curl/postman or same-origin non-browser requests
         if (!origin) return callback(null, true);
         if (allowedOrigins.indexOf(origin) !== -1) {
             callback(null, true);
@@ -54,6 +34,7 @@ app.options('*', cors(corsOptions));
 app.use('/uploads', express.static('uploads'));
 app.use(express.json());
 
+// tus rutas
 app.use('/auth', authRoutes);
 app.use('/user', userRoutes);
 app.use('/product', productRoutes);
@@ -61,18 +42,19 @@ app.use('/upload', upload);
 app.use('/config', configSistem);
 app.use('/orders', orders);
 
+// manejo 404
 app.use((req, res, next) => {
-    const error = new Error(' corriendo ...');
+    const error = new Error('Not found');
     error.status = 404;
     next(error);
 });
 
+// error handler
 app.use((error, req, res, next) => {
     res.status(error.status || 500);
     res.json({
-        error: {
-            message: error.message
-        }
-    })
+        error: { message: error.message }
+    });
 });
+
 module.exports = app;
